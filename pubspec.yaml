@@ -40,6 +40,11 @@ dependencies:
   fl_chart: ^0.63.0
   syncfusion_flutter_datepicker: ^21.2.10
   table_calendar: ^3.0.9
+  firebase_core: ^3.0.0
+  firebase_auth: 5.4.2  # For Firebase Authentication
+  cloud_firestore: ^5.0.0
+  firebase_database: ^11.3.2
+  firebase_storage: ^12.4.2
 
 dev_dependencies:
   flutter_test:

@@ -14,13 +14,18 @@ class Bottom extends StatefulWidget {
 
 class _BottomState extends State<Bottom> {
   int indexColor = 0;
-  // ignore: non_constant_identifier_names
+  // List of screens
   List Screen = [
     const Home(),
     const Statistics(),
     const CategoryScreen(),
     const SearchScreen()
   ];
+
+  // Disable Statistics, Category, and Search (set to false for now)
+  bool isClickableStatistics = false;  // Set to false to disable
+  bool isClickableCategory = false;    // Set to false to disable
+  bool isClickableSearch = false;      // Set to false to disable
 
   @override
   Widget build(BuildContext context) {
@@ -38,100 +43,102 @@ class _BottomState extends State<Bottom> {
         shape: const CircularNotchedRectangle(),
         child: Padding(
           padding: const EdgeInsets.only(top: 5, bottom: 5),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             GestureDetector(
-                onTap: () {
-                  setState(() {
-                    indexColor = 0;
-                  });
-                },
-                child: Container(
-                  height: 40,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: indexColor == index
-                    //     ? const Color.fromARGB(255, 47, 125, 121)
-                    //     : Colors.white,
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.home,
-                    size: 30,
-                    color:
-                        indexColor == 0 ? const Color(0xff368983) : Colors.grey,
-                  ),
-                )),
+              onTap: () {
+                setState(() {
+                  indexColor = 0; // Home
+                });
+              },
+              child: Container(
+                height: 40,
+                width: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.home,
+                  size: 30,
+                  color: indexColor == 0 ? const Color(0xff368983) : Colors.grey,
+                ),
+              ),
+            ),
             GestureDetector(
-                onTap: () {
-                  setState(() {
-                    indexColor = 1;
-                  });
-                },
-                child: Container(
-                  height: 40,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: indexColor == index
-                    //     ? const Color.fromARGB(255, 47, 125, 121)
-                    //     : Colors.white,
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.bar_chart_outlined,
-                    size: 30,
-                    color:
-                        indexColor == 1 ? const Color(0xff368983) : Colors.grey,
-                  ),
-                )),
+              onTap: isClickableStatistics
+                  ? () {
+                      setState(() {
+                        indexColor = 1; // Statistics
+                      });
+                    }
+                  : null,  // If not clickable, disable tap
+              child: Container(
+                height: 40,
+                width: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.bar_chart_outlined,
+                  size: 30,
+                  color: indexColor == 1
+                      ? const Color(0xff368983)
+                      : Colors.grey,
+                ),
+              ),
+            ),
             const SizedBox(
               width: 20,
             ),
             GestureDetector(
-                onTap: () {
-                  setState(() {
-                    indexColor = 2;
-                  });
-                },
-                child: Container(
-                  height: 40,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: indexColor == index
-                    //     ? const Color.fromARGB(255, 47, 125, 121)
-                    //     : Colors.white,
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.category_outlined,
-                    size: 30,
-                    color:
-                        indexColor == 2 ? const Color(0xff368983) : Colors.grey,
-                  ),
-                )),
+              onTap: isClickableCategory
+                  ? () {
+                      setState(() {
+                        indexColor = 2; // Category
+                      });
+                    }
+                  : null,  // If not clickable, disable tap
+              child: Container(
+                height: 40,
+                width: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.category_outlined,
+                  size: 30,
+                  color: indexColor == 2
+                      ? const Color(0xff368983)
+                      : Colors.grey,
+                ),
+              ),
+            ),
             GestureDetector(
-                onTap: () {
-                  setState(() {
-                    indexColor = 3;
-                  });
-                },
-                child: Container(
-                  height: 40,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.search_outlined,
-                    size: 30,
-                    color:
-                        indexColor == 3 ? const Color(0xff368983) : Colors.grey,
-                  ),
-                )),
+              onTap: isClickableSearch
+                  ? () {
+                      setState(() {
+                        indexColor = 3; // Search
+                      });
+                    }
+                  : null,  // If not clickable, disable tap
+              child: Container(
+                height: 40,
+                width: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.search_outlined,
+                  size: 30,
+                  color: indexColor == 3
+                      ? const Color(0xff368983)
+                      : Colors.grey,
+                ),
+              ),
+            ),
           ]),
         ),
       ),
