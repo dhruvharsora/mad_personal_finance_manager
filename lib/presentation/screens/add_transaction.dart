@@ -6,6 +6,7 @@ import 'package:expanse_management/domain/models/category_model.dart';
 import 'package:expanse_management/domain/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestoreBase;
 
 // import '../Constants/categories.dart';
 
@@ -126,101 +127,134 @@ class _AddScreenState extends State<AddScreen> {
     );
   }
 
-  GestureDetector addTransaction() {
-    bool isWarningShown = false;
-    return GestureDetector(
-      onTap: () {
-        if (selectedCategoryItem == null ||
-            selectedTypeItem == null ||
-            explainC.text.isEmpty ||
-            amountC.text.isEmpty) {
-          // Display an error message or show a snackbar indicating missing fields
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Error'),
-              content: const Text('Please fill in all the fields.'),
-              actions: [
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
-          return;
-        }
+GestureDetector addTransaction() {
+  firestoreBase.FirebaseFirestore firestore = firestoreBase.FirebaseFirestore.instance;
+  bool isWarningShown = false;
 
-        double amount = double.tryParse(amountC.text) ?? 0.0;
-        if (selectedTypeItem == 'Expense' &&
-            amount > limitPerExpense &&
-            !isWarningShown) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Warning'),
-              content: Text(
-                  'The amount exceeds the spending limit(${formatCurrency(limitPerExpense)}).'),
-              actions: [
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
-          isWarningShown =
-              true; // Set the flag to true after showing the warning
-          return;
-        }
-        var newTransaction = Transaction(selectedTypeItem!, amountC.text, date,
-            explainC.text, selectedCategoryItem!);
-        boxTransaction.add(newTransaction);
+  return GestureDetector(
+    onTap: () async {
+      if (selectedCategoryItem == null ||
+          selectedTypeItem == null ||
+          explainC.text.isEmpty ||
+          amountC.text.isEmpty) {
+        // Display an error message or show a snackbar indicating missing fields
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Please fill in all the fields.'),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      double amount = double.tryParse(amountC.text) ?? 0.0;
+      if (selectedTypeItem == 'Expense' &&
+          amount > limitPerExpense &&
+          !isWarningShown) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Warning'),
+            content: Text(
+                'The amount exceeds the spending limit(${formatCurrency(limitPerExpense)}).'),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+        isWarningShown = true; // Set the flag to true after showing the warning
+        return;
+      }
+
+      // Create a new transaction object
+      var newTransaction = Transaction(
+        selectedTypeItem!,
+        amountC.text,
+        date,
+        explainC.text,
+        selectedCategoryItem!,
+      );
+
+      // Add the transaction to Hive
+      boxTransaction.add(newTransaction);
+
+      // Send the transaction to Firestore
+      try {
+        await firestore.collection('transactions').add({
+          'type': selectedTypeItem,
+          'amount': double.parse(amountC.text),
+          'date': date,
+          'note': explainC.text,
+          'category': selectedCategoryItem!.title,
+          'categoryImage': selectedCategoryItem!.categoryImage,
+        });
+
+        // Show a success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Transaction added successfully!')),
+        );
+
+        // Navigate back to the previous screen
         Navigator.of(context).pop();
+      } catch (e) {
+        // Show an error message if something goes wrong
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add transaction: $e')),
+        );
+      }
 
-        if (selectedTypeItem == 'Expense' && totalBalance() < limitTotal) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Warning'),
-              content: Text(
-                  'Total balance is less than ${formatCurrency(limitTotal)}!'),
-              actions: [
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
-          return;
-        }
-      },
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: const Color(0xff368983)),
-        height: 50,
-        width: 140,
-        child: const Text(
-          'Add',
-          style: TextStyle(
-              fontFamily: 'f',
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: Colors.white),
-        ),
+      if (selectedTypeItem == 'Expense' && totalBalance() < limitTotal) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Warning'),
+            content: Text(
+                'Total balance is less than ${formatCurrency(limitTotal)}!'),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    },
+    child: Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: const Color(0xff368983)),
+      height: 50,
+      width: 140,
+      child: const Text(
+        'Add',
+        style: TextStyle(
+            fontFamily: 'f',
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: Colors.white),
       ),
-    );
-  }
-
+    ),
+  );
+}
   Padding timeField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
