@@ -260,7 +260,7 @@ Stack _head() {
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
                               color: Color.fromARGB(255, 216, 216, 216),
-                            ),  
+                            ),
                           ),
                         ],
                       ),
@@ -272,7 +272,7 @@ Stack _head() {
                             child: Icon(
                               Icons.arrow_downward,
                               color: Colors.black,
-                              size: 19, 
+                              size: 19,
                             ),
                           ),
                           SizedBox(width: 7),

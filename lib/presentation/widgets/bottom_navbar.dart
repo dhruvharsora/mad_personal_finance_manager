@@ -23,9 +23,9 @@ class _BottomState extends State<Bottom> {
   ];
 
   // Disable Statistics, Category, and Search (set to false for now)
-  bool isClickableStatistics = false;  // Set to false to disable
-  bool isClickableCategory = false;    // Set to false to disable
-  bool isClickableSearch = false;      // Set to false to disable
+  bool isClickableStatistics = true;  // Set to true to disable
+  bool isClickableCategory = true;    // Set to true to disable
+  bool isClickableSearch = true;      // Set to true to disable
 
   @override
   Widget build(BuildContext context) {
