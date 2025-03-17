@@ -1,32 +1,23 @@
 import 'package:expanse_management/presentation/widgets/bottom_navbar.dart';
 import 'package:expanse_management/domain/models/category_model.dart';
-import 'package:expanse_management/domain/models/transaction_model.dart' ;
+import 'package:expanse_management/domain/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as firestoreBase;
-import 'package:flutter/material.dart';
+import 'package:expanse_management/presentation/screens/splash_screen.dart'; // Import SplashScreen
 
-// Future<void> clearData() async {
-//   final appDocumentDirectory =
-//       await path_provider.getApplicationDocumentsDirectory();
-//   Hive.init(appDocumentDirectory.path);
-//   await Hive.deleteFromDisk();
-// }
+const FirebaseOptions firebaseConfig = FirebaseOptions(
+  apiKey: "AIzaSyDtaQPvP2Q_cX1QfelBo5MY6qjmrfFPJUw",
+  authDomain: "flutterfinancemanager.firebaseapp.com",
+  projectId: "flutterfinancemanager",
+  storageBucket: "flutterfinancemanager.firebasestorage.app",
+  messagingSenderId: "292027849955",
+  appId: "1:292027849955:web:d3f707bcd72878aaa639d6",
+);
 
-const FirebaseOptions firebaseConfig=FirebaseOptions(
-                                                      apiKey: "AIzaSyDtaQPvP2Q_cX1QfelBo5MY6qjmrfFPJUw",
-                                                      authDomain: "flutterfinancemanager.firebaseapp.com",
-                                                      projectId: "flutterfinancemanager",
-                                                      storageBucket: "flutterfinancemanager.firebasestorage.app",
-                                                      messagingSenderId: "292027849955",
-                                                      appId: "1:292027849955:web:d3f707bcd72878aaa639d6"
-                                                    );
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await clearData();
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(TransactionAdapter());
   Hive.registerAdapter(CategoryModelAdapter());
@@ -37,7 +28,6 @@ void main() async {
   print("firebase initialized");
   await uploadTestData();
   runApp(const MyApp());
-
 }
 
 Future<void> uploadTestData() async {
@@ -58,16 +48,14 @@ Future<void> uploadTestData() async {
   }
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Bottom(),
+      home: SplashScreen(), // Use SplashScreen as the home widget
     );
   }
 }
